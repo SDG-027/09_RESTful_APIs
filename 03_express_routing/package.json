@@ -4,14 +4,8 @@
   "description": "",
   "main": "dist/app.js",
   "type": "module",
-  "imports": {
-    "#utils": {
-      "development": "./src/utils/index.ts",
-      "default": "./dist/utils/index.js"
-    }
-  },
   "scripts": {
-    "dev": "node --watch --conditions development src/app.ts",
+    "dev": "node --watch --conditions development --env-file=.env src/app.ts",
     "prebuild": "rm -rf dist",
     "build": "tsc",
     "prestart": "npm run build",

@@ -22,9 +22,9 @@
     "outDir": "dist", // Output directory for compiled JavaScript
     /* Paths */
     "baseUrl": "./src", // Base path for module resolution
-    "paths": {
-      "#*": ["*"] // Defines internal path aliases with '#' to avoid conflict with '@'
-    }
+    // "paths": {
+    //   "#*": ["*"] // Defines internal path aliases with '#' to avoid conflict with '@'
+    // }
   },
-  "include": ["src"] // Files to include in compilation
+  "include": ["src"], // Files to include in compilation
 }
