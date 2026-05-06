@@ -16,38 +16,21 @@ const getUsers: RequestHandler = async (req, res) => {
 };
 
 const createUser: RequestHandler = async (req, res) => {
-  try {
-    const { firstName, lastName, email, password, isActive } = req.body as UserType;
-    if (!firstName || !lastName || !email || !password)
-      return res.status(400).json({ error: 'firstName, lastName, email, and password are required' });
-    const found = await User.findOne({ email });
-    if (found) return res.status(400).json({ error: 'User already exists' });
-    const user = await User.create<UserType>({ firstName, lastName, email, password, isActive });
-    res.json(user);
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      res.status(500).json({ message: error.message });
-    } else {
-      res.status(500).json({ message: 'An unknown error occurred' });
-    }
-  }
+  const { firstName, lastName, email, password, isActive } = req.body as UserType;
+  if (!firstName || !lastName || !email || !password) throw new Error('all data required', { cause: { status: 400 } });
+  const found = await User.findOne({ email });
+  if (found) return res.status(400).json({ error: 'User already exists' });
+  const user = await User.create({ firstName, lastName, email, password, isActive });
+  res.json(user);
 };
 
 const getUserById: RequestHandler = async (req, res) => {
-  try {
-    const {
-      params: { id }
-    } = req;
-    const user = await User.findById(id);
-    if (!user) return res.status(404).json({ error: 'User not found' });
-    res.json(user);
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      res.status(500).json({ message: error.message });
-    } else {
-      res.status(500).json({ message: 'An unknown error occurred' });
-    }
-  }
+  const {
+    params: { id }
+  } = req;
+  const user = await User.findById(id);
+  if (!user) throw new Error('User not found', { cause: { status: 404 } });
+  res.json(user);
 };
 
 const updateUser: RequestHandler = async (req, res) => {
