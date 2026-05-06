@@ -12,4 +12,4 @@ app.use(express.json());
 app.use('/users', userRouter);
 app.use('/posts', postRouter);
 
-app.listen(port, () => console.log(`\x1b[34mMain app listening at http://localhost:${port}\x1b[0m`));
+app.listen(port, () => console.log(`\x1b[34mMain app listening on port: ${port}\x1b[0m`));
