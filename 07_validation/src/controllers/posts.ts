@@ -1,13 +1,18 @@
 import { Post } from '#models';
-import type { PostType } from '#types';
+import type { createPostSchema, updatePostSchema } from '#schemas';
 import type { RequestHandler } from 'express';
+import type z from 'zod';
+
+type PostCreate = z.infer<typeof createPostSchema>;
+type PostUpdate = z.infer<typeof updatePostSchema>;
+type IdParam = { id: string };
 
 const getPosts: RequestHandler = async (req, res) => {
   const posts = await Post.find().populate('userId', 'firstName lastName email').lean();
   res.json(posts);
 };
 
-const createPost: RequestHandler = async (req, res) => {
+const createPost: RequestHandler<unknown, unknown, PostCreate> = async (req, res) => {
   const post = await Post.create(req.body);
   const populatedPost = await post.populate('userId', 'firstName lastName email');
   res.json(populatedPost);
@@ -22,7 +27,7 @@ const getPostById: RequestHandler = async (req, res) => {
   res.json(post);
 };
 
-const updatePost: RequestHandler = async (req, res) => {
+const updatePost: RequestHandler<IdParam, unknown, PostUpdate> = async (req, res) => {
   const {
     body,
     params: { id }
@@ -44,6 +49,7 @@ const updatePost: RequestHandler = async (req, res) => {
   // await post.save();
 
   // const populatedPost = await post.populate('userId', 'firstName lastName email');
+
   res.json(post);
 };
 

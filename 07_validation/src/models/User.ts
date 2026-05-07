@@ -4,26 +4,21 @@ const userSchema = new Schema(
   {
     firstName: {
       type: String,
-      required: [true, 'First name is required'],
-      trim: true
+      required: [true, 'First name is required']
     },
     lastName: {
       type: String,
-      required: [true, 'Last name is required'],
-      trim: true
+      required: [true, 'Last name is required']
     },
     email: {
       type: String,
       required: [true, 'Email is required'],
-      unique: true,
-      trim: true,
-      match: [/^\S+@\S+\.\S+$/, 'Email is not valid']
+      unique: true
     },
     password: {
       type: String,
       required: [true, 'Password is required'],
       select: false
-      // minlength: [6, 'Password must be at least 6 characters long']
     },
     isActive: {
       type: Boolean,

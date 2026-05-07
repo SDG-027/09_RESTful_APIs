@@ -21,7 +21,7 @@ const createPostSchema = z.object({
 //   content: contentSchema.optional(),
 //   userId: objectIdSchema
 // });
-//
-const updatePostSchema = createPostSchema.partial();
+
+const updatePostSchema = createPostSchema.partial().extend({ userId: objectIdSchema });
 
 export { createPostSchema, updatePostSchema };

@@ -15,12 +15,20 @@ function validate(schema: ZodObject): RequestHandler {
     if (!success) {
       // z.prettifyError() wandelt den technischen Zod-Fehler in einen
       // lesbaren Text um — praktisch für Fehlermeldungen in der API-Antwort.
-      const errMessage = z.prettifyError(error);
+      // const errMessage = z.prettifyError(error);
 
       // Wir werfen einen Error mit einem cause-Objekt.
       // Das cause-Objekt trägt den HTTP-Statuscode 400 (Bad Request),
       // den unser globaler Error-Handler später auslesen und an den Client senden kann.
-      throw new Error(errMessage, { cause: { status: 400 } });
+      // throw new Error(errMessage, { cause: { status: 400 } });
+      //
+
+      const issues = error.issues.map(i => ({
+        path: i.path.join('.'),
+        message: i.message
+      }));
+
+      return res.status(400).json({ issues, message: 'Validation failed' });
     }
 
     // Wenn die Validierung erfolgreich war, überschreiben wir req.body mit den
