@@ -8,9 +8,7 @@ const getPosts: RequestHandler = async (req, res) => {
 };
 
 const createPost: RequestHandler = async (req, res) => {
-  const { title, content, userId } = req.body as PostType;
-  if (!title || !content || !userId) return res.status(400).json({ error: 'title, content, and userId are required' });
-  const post = await Post.create<PostType>({ title, content, userId });
+  const post = await Post.create(req.body);
   const populatedPost = await post.populate('userId', 'firstName lastName email');
   res.json(populatedPost);
 };
@@ -19,28 +17,34 @@ const getPostById: RequestHandler = async (req, res) => {
   const {
     params: { id }
   } = req;
-  const post = await Post.findById(id).populate('userId', 'firstName lastName email');
+  const post = await Post.findById(id).populate('userId', 'firstName email');
   if (!post) return res.status(404).json({ error: 'Post not found' });
   res.json(post);
 };
 
 const updatePost: RequestHandler = async (req, res) => {
   const {
-    body: { title, content, userId },
+    body,
     params: { id }
   } = req;
-  if (!title || !content || !userId) return res.status(400).json({ error: 'title, content, and userId are required' });
 
-  const post = await Post.findById(id);
-  if (!post) return res.status(404).json({ error: 'Post not found' });
+  // MongoDB Updates sind standardmäßig parziell. Wenn nur title enthalten ist,
+  // wird nur der title überschrieben; alles andere bleibt.
+  const post = await Post.findByIdAndUpdate(id, body, { returnDocument: 'after' }).populate(
+    'userId',
+    'firstName email'
+  );
 
-  post.title = title;
-  post.content = content;
-  post.userId = userId;
-  await post.save();
+  // const post = await Post.findById(id);
+  // if (!post) return res.status(404).json({ error: 'Post not found' });
 
-  const populatedPost = await post.populate('userId', 'firstName lastName email');
-  res.json(populatedPost);
+  // post.title = title;
+  // post.content = content;
+  // post.userId = userId;
+  // await post.save();
+
+  // const populatedPost = await post.populate('userId', 'firstName lastName email');
+  res.json(post);
 };
 
 const deletePost: RequestHandler = async (req, res) => {
