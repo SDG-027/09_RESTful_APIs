@@ -1,7 +1,9 @@
 declare global {
   namespace Express {
     export interface Request {
-      file?: unknown;
+      file?: {
+        filepath: string;
+      };
     }
   }
 }

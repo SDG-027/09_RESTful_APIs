@@ -3,24 +3,26 @@ import { toast } from 'react-hot-toast';
 import { getUserById, updateUser } from '../data/users.ts';
 import Preview from './Preview.tsx';
 
+const userId = '69fde0834e2fc2f75bf7a7ed';
+
 const EditForm = () => {
   const [imagePreview, setImagePreview] = useState('');
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     firstName: '',
     lastName: '',
-    email: '',
-    image: ''
+    email: ''
+    // image: ''
   });
 
   useEffect(() => {
     let ignore = false;
     (async () => {
       try {
-        const userData = await getUserById('686676f800df04974a77c9df');
+        const userData = await getUserById(userId);
         if (!ignore) {
           const { firstName, lastName, email, image } = userData;
-          setForm({ firstName, lastName, email, image });
+          setForm({ firstName, lastName, email });
           setImagePreview(image);
         }
       } catch (error) {
@@ -49,14 +51,20 @@ const EditForm = () => {
     try {
       setLoading(true);
 
+      const formData = new FormData(e.currentTarget);
+      // formData.append("firstName", form.firstName)
+      // formData.append("image", )
+      //
+      // console.log(Object.fromEntries(formData));
+
       const { firstName, lastName, email, image } = await updateUser({
-        id: '686676f800df04974a77c9df',
-        formData: form
+        id: userId,
+        formData
       });
 
       setImagePreview(image);
 
-      setForm({ firstName, lastName, email, image });
+      setForm({ firstName, lastName, email });
       toast.success('Profile updated');
     } catch (error) {
       console.error(error);
@@ -74,8 +82,8 @@ const EditForm = () => {
   return (
     <div className="container mx-auto">
       <h1 className="text-center text-4xl">File upload</h1>
-      <form className="mt-5 w-1/2 mx-auto flex flex-col items-center gap-5" onSubmit={handleSubmit}>
-        <label className="input input-bordered flex items-center gap-2 w-full">
+      <form className="mx-auto mt-5 flex w-1/2 flex-col items-center gap-5" onSubmit={handleSubmit}>
+        <label className="input input-bordered flex w-full items-center gap-2">
           First Name:
           <input
             value={form.firstName}
@@ -85,7 +93,7 @@ const EditForm = () => {
             className="grow"
           />
         </label>
-        <label className="input input-bordered flex items-center gap-2 w-full">
+        <label className="input input-bordered flex w-full items-center gap-2">
           Last Name:
           <input
             value={form.lastName}
@@ -95,7 +103,7 @@ const EditForm = () => {
             className="grow"
           />
         </label>
-        <label className="input input-bordered flex items-center gap-2 w-full">
+        <label className="input input-bordered flex w-full items-center gap-2">
           Email:
           <input
             value={form.email}
@@ -106,7 +114,7 @@ const EditForm = () => {
           />
         </label>
 
-        <label className="input input-bordered flex items-center gap-2 w-full">
+        {/*<label className="input input-bordered flex items-center gap-2 w-full">
           Image:
           <input
             value={form.image}
@@ -115,7 +123,16 @@ const EditForm = () => {
             name="image"
             className="grow"
           />
-        </label>
+        </label>*/}
+
+        <input
+          type="file"
+          name="image"
+          className="file-input input-bordered w-full"
+          onChange={e => {
+            setImagePreview(URL.createObjectURL(e.target.files![0])); // In-Browser Preview
+          }}
+        />
 
         <button type="submit" className="btn btn-block" disabled={loading}>
           Upload

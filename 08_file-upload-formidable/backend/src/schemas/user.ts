@@ -1,9 +1,9 @@
 import { z } from 'zod/v4';
 
 const userSchema = z.strictObject({
-  firstName: z.string().min(1, 'First name is required'),
-  lastName: z.string().min(1, 'Last name is required'),
-  email: z.email('Invalid email.'),
+  firstName: z.coerce.string().min(1, 'First name is required'),
+  lastName: z.coerce.string().min(1, 'Last name is required'),
+  email: z.coerce.string('Invalid email.'),
   image: z
     .url({
       protocol: /^https?$/,
